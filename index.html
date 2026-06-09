@@ -1297,14 +1297,14 @@
 
   <section class="section kessler" id="kessler">
     <div class="container">
-      <div class="kessler__header reveal">
+      <div class="kessler__header reveal is-visible">
         <h2 class="kessler__title">最坏的剧本：碎片连锁反应</h2>
         <p class="kessler__desc">
           点击"开始模拟"，观察一颗卫星爆炸如何引发不可控的级联效应
         </p>
       </div>
 
-      <div class="kessler__simulation reveal reveal--delay-1">
+      <div class="kessler__simulation reveal reveal--delay-1 is-visible">
         <canvas id="kesslerCanvas"></canvas>
         <div class="kessler__controls">
           <button class="btn--kessler" id="kesslerStart">▶ 开始模拟</button>
@@ -1312,7 +1312,7 @@
         </div>
       </div>
 
-      <div class="kessler__caption reveal reveal--delay-2">
+      <div class="kessler__caption reveal reveal--delay-2 is-visible">
         <p>
           1978年，NASA科学家唐纳德·凯斯勒提出：当轨道物体密度达到某个阈值，一次碰撞会引发不可控的级联效应。届时，任何新卫星都将被碎片击毁，近地轨道可能关闭数十年。
         </p>
@@ -1325,17 +1325,17 @@
 
   <section class="section solutions" id="solutions">
     <div class="container">
-      <div class="solutions__header reveal">
+      <div class="solutions__header reveal is-visible">
         <h2 class="solutions__title">可行的治理路径</h2>
         <p class="governance__subtitle">三个提案方向，可左右拖拽查看</p>
       </div>
 
-      <div class="slider-hint reveal">
+      <div class="slider-hint reveal is-visible">
         <span>← 左右拖拽或滑动切换 →</span>
         <span class="slider-hint__arrow">⇄</span>
       </div>
 
-      <div class="slider-container reveal reveal--delay-1">
+      <div class="slider-container reveal reveal--delay-1 is-visible">
         <div class="slider" id="solutionsSlider">
           <div class="slider-card">
             <div class="slider-card__num">01</div>
@@ -1373,7 +1373,7 @@
         </div>
       </div>
 
-      <div class="disclaimer reveal reveal--delay-2">
+      <div class="disclaimer reveal reveal--delay-2 is-visible">
         <span class="disclaimer__icon">⚠️</span>
         <p class="disclaimer__text">
           <strong>争议提示：</strong>这些方案的推进会面临一定争议和困难：发展中国家担心费用与监管的公平，而大国将让渡部分共享数据和协调的权力，这些都是全球治理亟待解决的问题。
@@ -1384,11 +1384,11 @@
 
   <section class="section action" id="action">
     <div class="container">
-      <div class="action__header reveal">
+      <div class="action__header reveal is-visible">
         <h2 class="action__title">这不仅是政府的事务，你的关注就是动力</h2>
       </div>
 
-      <div class="action-grid reveal reveal--delay-1">
+      <div class="action-grid reveal reveal--delay-1 is-visible">
         <div class="action-card">
           <span class="action-card__icon">🔭</span>
           <h3 class="action-card__title">追问透明度</h3>
@@ -1414,7 +1414,7 @@
         </div>
       </div>
 
-      <div class="pledge reveal reveal--delay-2" id="pledgeArea">
+      <div class="pledge reveal reveal--delay-2 is-visible" id="pledgeArea">
         <h3 class="pledge__title">签署虚拟承诺：支持建立国际太空交通规则</h3>
         <button class="pledge__btn" id="pledgeBtn">
           <span>✍️</span>
@@ -1528,61 +1528,110 @@
     const ctx = canvas.getContext('2d');
     let particles = [];
     let isSimulating = false;
-    const MAX_PARTICLES = 500;
+    let animationId = null;
+    const MAX_PARTICLES = 300;
     const canvasWidth = 700;
     const canvasHeight = 525;
 
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
+    function drawEarth() {
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      const earthRadius = 45;
+
+      const gradient = ctx.createRadialGradient(centerX - 10, centerY - 10, 0, centerX, centerY, earthRadius);
+      gradient.addColorStop(0, '#4a90d9');
+      gradient.addColorStop(0.5, '#2d5a8a');
+      gradient.addColorStop(1, '#1a3a5c');
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function drawGrid() {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.lineWidth = 1;
+
+      const gridSize = 30;
+      for (let x = 0; x < canvasWidth; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasHeight);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvasHeight; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasWidth, y);
+        ctx.stroke();
+      }
+    }
+
     function initSimulation() {
       particles = [];
       const centerX = canvasWidth / 2;
       const centerY = canvasHeight / 2;
-      const baseRadius = 80;
 
-      for (let i = 0; i < 30; i++) {
-        const angle = (i / 30) * Math.PI * 2;
-        const radius = baseRadius + (Math.random() - 0.5) * 60;
+      for (let i = 0; i < 25; i++) {
+        const angle = (i / 25) * Math.PI * 2;
+        const radius = 90 + (Math.random() - 0.5) * 50;
+        const speed = 0.3 + Math.random() * 0.2;
         particles.push({
           x: centerX + Math.cos(angle) * radius,
           y: centerY + Math.sin(angle) * radius,
-          vx: -Math.sin(angle) * 0.4,
-          vy: Math.cos(angle) * 0.4,
-          radius: 2 + Math.random() * 2,
+          vx: -Math.sin(angle) * speed,
+          vy: Math.cos(angle) * speed,
+          radius: 2.5 + Math.random() * 1.5,
           color: '#ffffff',
-          alpha: 1
+          alpha: 1,
+          isSatellite: true
         });
       }
-      drawInitial();
+      drawFrame();
     }
 
-    function drawInitial() {
-      ctx.fillStyle = '#0a0a0a';
+    function drawFrame() {
+      ctx.fillStyle = '#050508';
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      drawGrid();
+      drawEarth();
+
       particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
         ctx.fill();
+        ctx.globalAlpha = 1;
       });
     }
 
     function explode(x, y) {
       if (particles.length >= MAX_PARTICLES) return;
-      const count = Math.min(8, MAX_PARTICLES - particles.length);
+      const count = Math.min(6, MAX_PARTICLES - particles.length);
       for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
-        const speed = 1.5 + Math.random() * 1.5;
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.3;
+        const speed = 1.2 + Math.random() * 1;
         particles.push({
           x: x,
           y: y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          radius: 1.5 + Math.random() * 1.5,
-          color: '#ff6b6b',
+          radius: 1 + Math.random() * 1.5,
+          color: '#ff8866',
           alpha: 1,
-          isDebris: true
+          isSatellite: false,
+          decay: 0.008 + Math.random() * 0.004
         });
       }
     }
@@ -1590,8 +1639,8 @@
     function updateSimulation() {
       if (!isSimulating) return;
 
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      drawGrid();
+      drawEarth();
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -1599,24 +1648,18 @@
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > canvasWidth) p.vx *= -0.8;
-        if (p.y < 0 || p.y > canvasHeight) p.vy *= -0.8;
+        if (p.x < p.radius) { p.x = p.radius; p.vx *= -0.9; }
+        if (p.x > canvasWidth - p.radius) { p.x = canvasWidth - p.radius; p.vx *= -0.9; }
+        if (p.y < p.radius) { p.y = p.radius; p.vy *= -0.9; }
+        if (p.y > canvasHeight - p.radius) { p.y = canvasHeight - p.radius; p.vy *= -0.9; }
 
-        p.vx *= 0.998;
-        p.vy *= 0.998;
-
-        if (p.isDebris) {
-          p.alpha -= 0.003;
-          if (p.alpha <= 0) {
+        if (!p.isSatellite) {
+          p.alpha -= p.decay;
+          p.radius *= 0.995;
+          if (p.alpha <= 0.1 || p.radius < 0.5) {
             particles.splice(i, 1);
             continue;
           }
-        }
-
-        if (!p.isDebris && Math.random() < 0.003) {
-          explode(p.x, p.y);
-          particles.splice(i, 1);
-          continue;
         }
 
         ctx.beginPath();
@@ -1635,7 +1678,7 @@
           const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < p1.radius + p2.radius) {
+          if (dist < p1.radius + p2.radius + 2) {
             explode(p1.x, p1.y);
             particles.splice(j, 1);
             particles.splice(i, 1);
@@ -1645,27 +1688,20 @@
         }
       }
 
-      requestAnimationFrame(updateSimulation);
+      if (particles.length > 0 && Math.random() < 0.008) {
+        const idx = Math.floor(Math.random() * particles.length);
+        const p = particles[idx];
+        if (p.isSatellite) {
+          explode(p.x, p.y);
+          particles.splice(idx, 1);
+        }
+      }
+
+      animationId = requestAnimationFrame(updateSimulation);
     }
 
     document.getElementById('kesslerStart').addEventListener('click', () => {
       if (!isSimulating) {
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        particles = [];
-        for (let i = 0; i < 30; i++) {
-          const angle = (i / 30) * Math.PI * 2;
-          const radius = 80 + (Math.random() - 0.5) * 60;
-          particles.push({
-            x: canvasWidth / 2 + Math.cos(angle) * radius,
-            y: canvasHeight / 2 + Math.sin(angle) * radius,
-            vx: -Math.sin(angle) * 0.4,
-            vy: Math.cos(angle) * 0.4,
-            radius: 2 + Math.random() * 2,
-            color: '#ffffff',
-            alpha: 1
-          });
-        }
         isSimulating = true;
         updateSimulation();
       }
@@ -1673,6 +1709,10 @@
 
     document.getElementById('kesslerReset').addEventListener('click', () => {
       isSimulating = false;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
       initSimulation();
     });
 

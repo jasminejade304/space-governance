@@ -1508,6 +1508,8 @@
         pledgeBtn.disabled = true;
         pledgeBtn.textContent = '✓ 已签署承诺';
       });
+
+      initKesslerSimulation();
     });
 
     function copyLink() {
@@ -1524,258 +1526,62 @@
       alert('知识卡片下载功能开发中...');
     }
 
-    const canvas = document.getElementById('kesslerCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let isSimulating = false;
-    let animationId = null;
-    let explosionQueue = [];
-    const MAX_PARTICLES = 500;
-    const canvasWidth = 700;
-    const canvasHeight = 525;
+    function initKesslerSimulation() {
+      const canvas = document.getElementById('kesslerCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let isSimulating = false;
+      let animationId = null;
+      const MAX_PARTICLES = 500;
+      const canvasWidth = 700;
+      const canvasHeight = 525;
 
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
-    function drawEarth() {
-      const centerX = canvasWidth / 2;
-      const centerY = canvasHeight / 2;
-      const earthRadius = 45;
+      function drawEarth() {
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
+        const earthRadius = 45;
 
-      const gradient = ctx.createRadialGradient(centerX - 15, centerY - 15, 0, centerX, centerY, earthRadius);
-      gradient.addColorStop(0, '#5a9fe9');
-      gradient.addColorStop(0.4, '#3d7bc9');
-      gradient.addColorStop(0.7, '#2d5a8a');
-      gradient.addColorStop(1, '#1a3a5c');
+        const gradient = ctx.createRadialGradient(centerX - 15, centerY - 15, 0, centerX, centerY, earthRadius);
+        gradient.addColorStop(0, '#5a9fe9');
+        gradient.addColorStop(0.4, '#3d7bc9');
+        gradient.addColorStop(0.7, '#2d5a8a');
+        gradient.addColorStop(1, '#1a3a5c');
 
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(centerX + 15, centerY - 10, 12, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.fill();
-    }
-
-    function drawGrid() {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-      ctx.lineWidth = 1;
-
-      const gridSize = 25;
-      for (let x = 0; x < canvasWidth; x += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvasHeight);
+        ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 2;
         ctx.stroke();
       }
-      for (let y = 0; y < canvasHeight; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvasWidth, y);
-        ctx.stroke();
-      }
-    }
 
-    function initSimulation() {
-      particles = [];
-      const centerX = canvasWidth / 2;
-      const centerY = canvasHeight / 2;
+      function drawGrid() {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.lineWidth = 1;
 
-      for (let i = 0; i < 35; i++) {
-        const angle = (i / 35) * Math.PI * 2;
-        const radius = 80 + (Math.random() - 0.5) * 70;
-        const speed = 0.25 + Math.random() * 0.15;
-        const size = 2 + Math.random() * 2;
-        particles.push({
-          x: centerX + Math.cos(angle) * radius,
-          y: centerY + Math.sin(angle) * radius,
-          vx: -Math.sin(angle) * speed,
-          vy: Math.cos(angle) * speed,
-          radius: size,
-          color: '#ffffff',
-          alpha: 1,
-          isSatellite: true,
-          trail: []
-        });
-      }
-      drawFrame();
-    }
-
-    function drawFrame() {
-      ctx.fillStyle = '#0a0a0f';
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      drawGrid();
-      drawEarth();
-
-      particles.forEach(p => {
-        if (p.trail && p.trail.length > 0) {
+        const gridSize = 25;
+        for (let x = 0; x < canvasWidth; x += gridSize) {
           ctx.beginPath();
-          ctx.moveTo(p.trail[0].x, p.trail[0].y);
-          p.trail.forEach(point => {
-            ctx.lineTo(point.x, point.y);
-          });
-          ctx.strokeStyle = `rgba(255, 255, 255, ${p.alpha * 0.3})`;
-          ctx.lineWidth = 1;
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvasHeight);
           ctx.stroke();
         }
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-        
-        if (p.isSatellite) {
+        for (let y = 0; y < canvasHeight; y += gridSize) {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius * 1.5, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-          ctx.lineWidth = 1;
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvasWidth, y);
           ctx.stroke();
         }
-        ctx.globalAlpha = 1;
-      });
-    }
-
-    function explode(x, y, isInitial = false) {
-      if (particles.length >= MAX_PARTICLES) return;
-      const count = isInitial ? 15 : Math.min(10, MAX_PARTICLES - particles.length);
-      
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
-        const speed = isInitial ? (2 + Math.random() * 2) : (1.5 + Math.random() * 1.5);
-        particles.push({
-          x: x,
-          y: y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          radius: isInitial ? (1.5 + Math.random() * 2) : (1 + Math.random() * 1.5),
-          color: '#ff6b6b',
-          alpha: 1,
-          isSatellite: false,
-          decay: 0.005 + Math.random() * 0.005,
-          isHot: true,
-          heatFrames: 30
-        });
       }
 
-      ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
-      const explosionGradient = ctx.createRadialGradient(x, y, 0, x, y, 20);
-      explosionGradient.addColorStop(0, 'rgba(255, 200, 100, 0.8)');
-      explosionGradient.addColorStop(0.5, 'rgba(255, 100, 50, 0.4)');
-      explosionGradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
-      ctx.fillStyle = explosionGradient;
-      ctx.fill();
-    }
-
-    function updateSimulation() {
-      if (!isSimulating) return;
-
-      ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      drawGrid();
-      drawEarth();
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        
-        if (p.isSatellite && p.trail) {
-          p.trail.push({ x: p.x, y: p.y });
-          if (p.trail.length > 20) p.trail.shift();
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < p.radius || p.x > canvasWidth - p.radius) {
-          p.vx *= -0.85;
-          p.x = Math.max(p.radius, Math.min(canvasWidth - p.radius, p.x));
-        }
-        if (p.y < p.radius || p.y > canvasHeight - p.radius) {
-          p.vy *= -0.85;
-          p.y = Math.max(p.radius, Math.min(canvasHeight - p.radius, p.y));
-        }
-
-        if (!p.isSatellite) {
-          if (p.isHot && p.heatFrames > 0) {
-            p.heatFrames--;
-            p.color = p.heatFrames > 15 ? '#ff4444' : '#ff8866';
-          } else {
-            p.isHot = false;
-            p.color = '#aaaaaa';
-          }
-          
-          p.alpha -= p.decay;
-          p.radius *= 0.997;
-          if (p.alpha <= 0.1 || p.radius < 0.5) {
-            particles.splice(i, 1);
-            continue;
-          }
-        }
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        
-        if (p.isHot) {
-          ctx.shadowColor = p.color;
-          ctx.shadowBlur = 10;
-        }
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.globalAlpha = 1;
-      }
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const p1 = particles[i];
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < p1.radius + p2.radius + 3) {
-            explode(p1.x, p1.y);
-            particles.splice(j, 1);
-            particles.splice(i, 1);
-            i--;
-            break;
-          }
-        }
-      }
-
-      animationId = requestAnimationFrame(updateSimulation);
-    }
-
-    function triggerInitialExplosion() {
-      const centerX = canvasWidth / 2;
-      const centerY = canvasHeight / 2;
-      const farthestSatellite = particles.reduce((farthest, p) => {
-        if (!p.isSatellite) return farthest;
-        const dist = Math.sqrt(Math.pow(p.x - centerX, 2) + Math.pow(p.y - centerY, 2));
-        return dist > farthest.dist ? { p, dist } : farthest;
-      }, { dist: 0 });
-
-      if (farthestSatellite.p) {
-        explode(farthestSatellite.p.x, farthestSatellite.p.y, true);
-        particles = particles.filter(p => p !== farthestSatellite.p);
-      }
-    }
-
-    document.getElementById('kesslerStart').addEventListener('click', () => {
-      if (!isSimulating) {
-        ctx.fillStyle = '#0a0a0f';
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        
+      function resetParticles() {
         particles = [];
         const centerX = canvasWidth / 2;
         const centerY = canvasHeight / 2;
@@ -1784,39 +1590,199 @@
           const angle = (i / 35) * Math.PI * 2;
           const radius = 80 + (Math.random() - 0.5) * 70;
           const speed = 0.25 + Math.random() * 0.15;
+          const size = 2 + Math.random() * 2;
           particles.push({
             x: centerX + Math.cos(angle) * radius,
             y: centerY + Math.sin(angle) * radius,
             vx: -Math.sin(angle) * speed,
             vy: Math.cos(angle) * speed,
-            radius: 2 + Math.random() * 2,
+            radius: size,
             color: '#ffffff',
             alpha: 1,
             isSatellite: true,
             trail: []
           });
         }
+      }
 
+      function drawFrame() {
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        drawGrid();
+        drawEarth();
+
+        particles.forEach(p => {
+          if (p.trail && p.trail.length > 0) {
+            ctx.beginPath();
+            ctx.moveTo(p.trail[0].x, p.trail[0].y);
+            p.trail.forEach(point => {
+              ctx.lineTo(point.x, point.y);
+            });
+            ctx.strokeStyle = `rgba(255, 255, 255, ${p.alpha * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function explode(x, y) {
+        if (particles.length >= MAX_PARTICLES) return;
+        const count = Math.min(12, MAX_PARTICLES - particles.length);
+        
+        for (let i = 0; i < count; i++) {
+          const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+          const speed = 2 + Math.random() * 2;
+          particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: 1 + Math.random() * 2,
+            color: '#ff4444',
+            alpha: 1,
+            isSatellite: false,
+            decay: 0.008 + Math.random() * 0.004,
+            heatFrames: 40
+          });
+        }
+
+        ctx.beginPath();
+        ctx.arc(x, y, 25, 0, Math.PI * 2);
+        const explosionGradient = ctx.createRadialGradient(x, y, 0, x, y, 25);
+        explosionGradient.addColorStop(0, 'rgba(255, 200, 100, 1)');
+        explosionGradient.addColorStop(0.4, 'rgba(255, 100, 50, 0.6)');
+        explosionGradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
+        ctx.fillStyle = explosionGradient;
+        ctx.fill();
+      }
+
+      function updateSimulation() {
+        if (!isSimulating) return;
+
+        ctx.fillStyle = 'rgba(10, 10, 15, 0.15)';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        drawGrid();
+        drawEarth();
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          
+          if (p.isSatellite && p.trail) {
+            p.trail.push({ x: p.x, y: p.y });
+            if (p.trail.length > 15) p.trail.shift();
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < p.radius || p.x > canvasWidth - p.radius) {
+            p.vx *= -0.85;
+            p.x = Math.max(p.radius, Math.min(canvasWidth - p.radius, p.x));
+          }
+          if (p.y < p.radius || p.y > canvasHeight - p.radius) {
+            p.vy *= -0.85;
+            p.y = Math.max(p.radius, Math.min(canvasHeight - p.radius, p.y));
+          }
+
+          if (!p.isSatellite) {
+            if (p.heatFrames > 0) {
+              p.heatFrames--;
+              p.color = p.heatFrames > 20 ? '#ff4444' : '#ff8866';
+            } else {
+              p.color = '#cccccc';
+            }
+            
+            p.alpha -= p.decay;
+            p.radius *= 0.995;
+            if (p.alpha <= 0.05 || p.radius < 0.5) {
+              particles.splice(i, 1);
+              continue;
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          
+          if (p.heatFrames > 0) {
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 8;
+          }
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = 1;
+        }
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p1 = particles[i];
+            const p2 = particles[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < p1.radius + p2.radius + 2) {
+              explode(p1.x, p1.y);
+              particles.splice(j, 1);
+              particles.splice(i, 1);
+              i--;
+              break;
+            }
+          }
+        }
+
+        if (particles.length > 0 && Math.random() < 0.015) {
+          const idx = Math.floor(Math.random() * particles.length);
+          const p = particles[idx];
+          if (p.isSatellite) {
+            explode(p.x, p.y);
+            particles.splice(idx, 1);
+          }
+        }
+
+        animationId = requestAnimationFrame(updateSimulation);
+      }
+
+      function startSimulation() {
+        if (isSimulating) return;
+        
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        resetParticles();
         isSimulating = true;
         updateSimulation();
-
-        setTimeout(() => {
-          if (isSimulating) {
-            triggerInitialExplosion();
-          }
-        }, 1000);
       }
-    });
 
-    document.getElementById('kesslerReset').addEventListener('click', () => {
-      isSimulating = false;
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
+      function stopSimulation() {
+        isSimulating = false;
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
       }
-      initSimulation();
-    });
 
-    initSimulation();
+      function resetSimulation() {
+        stopSimulation();
+        resetParticles();
+        drawFrame();
+      }
+
+      const startBtn = document.getElementById('kesslerStart');
+      const resetBtn = document.getElementById('kesslerReset');
+
+      startBtn.addEventListener('click', startSimulation);
+      resetBtn.addEventListener('click', resetSimulation);
+
+      resetSimulation();
+    }
   </script>
 </body></html>

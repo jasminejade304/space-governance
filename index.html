@@ -1300,15 +1300,14 @@
       <div class="kessler__header reveal is-visible">
         <h2 class="kessler__title">最坏的剧本：碎片连锁反应</h2>
         <p class="kessler__desc">
-          点击"开始模拟"，观察一颗卫星爆炸如何引发不可控的级联效应
+          一颗卫星爆炸如何引发不可控的级联效应
         </p>
       </div>
 
       <div class="kessler__simulation reveal reveal--delay-1 is-visible">
         <canvas id="kesslerCanvas"></canvas>
         <div class="kessler__controls">
-          <button class="btn--kessler" id="kesslerStart">▶ 开始模拟</button>
-          <button class="btn--kessler" id="kesslerReset">↺ 重置</button>
+          <button class="btn--kessler" id="kesslerReset">↺ 重播动画</button>
         </div>
       </div>
 
@@ -1743,13 +1742,22 @@
         drawFrame();
       }
 
-      const startBtn = document.getElementById('kesslerStart');
       const resetBtn = document.getElementById('kesslerReset');
 
-      startBtn.addEventListener('click', startSimulation);
-      resetBtn.addEventListener('click', resetSimulation);
+      resetBtn.addEventListener('click', function() {
+        resetSimulation();
+        setTimeout(function() {
+          isSimulating = true;
+          updateSimulation();
+        }, 500);
+      });
 
       resetSimulation();
+      
+      setTimeout(function() {
+        isSimulating = true;
+        updateSimulation();
+      }, 1000);
     }
   </script>
 </body></html>

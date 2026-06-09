@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<!-- saved from url=(0115)file:///C:/Users/%E6%9D%8E%E4%BD%B3%E8%B1%AB/Desktop/%E6%96%B0%E5%BB%BA%20%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外空治理困境：一场无声的圈地运动</title>
+
+  <!-- ============================================ -->
+  <!-- 设计系统与全局样式                             -->
+  <!-- ============================================ -->
+  <style>
+    /* --------------------------------------------
+       CSS 变量系统 - 统一控制整站色彩、间距与动效
+       在 Trae 中修改这些变量即可全局换肤
+       -------------------------------------------- */
+    :root {
+      /* 核心色彩 */
+      --color-bg: #F7F8FA;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #0A0A0A;
+      --color-text-secondary: #5A5A5A;
+      --color-text-muted: #8A8A8A;
+      --color-border: #0A0A0A;
+      --color-accent-olive: #8F9779;
+      --color-accent-olive-light: #E8EBE0;
+
+      /* 渐变色彩 - 参考 POSTCRAFT 卡片风格 */
+      --gradient-instagram: linear-gradient(135deg, #C13584 0%, #E1306C 50%, #F77737 100%);
+      --gradient-twitter: linear-gradient(135deg, #1DA1F2 0%, #0D8BD9 100%);
+      --gradient-linkedin: linear-gradient(135deg, #0077B5 0%, #005885 100%);
+      --gradient-warm: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+
+      /* 间距系统 - 基于 4px 的 8pt 网格 */
+      --space-xs: 0.5rem;   /* 8px */
+      --space-sm: 1rem;     /* 16px */
+      --space-md: 1.5rem;   /* 24px */
+      --space-lg: 2.5rem;   /* 40px */
+      --space-xl: 4rem;     /* 64px */
+      --space-2xl: 6rem;    /* 96px */
+      --space-3xl: 8rem;    /* 128px */
+
+      /* 圆角系统 */
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+
+      /* 边框与阴影 - 参考 POSTCRAFT 粗边框风格 */
+      --border-thick: 2.5px solid var(--color-border);
+      --shadow-offset: 6px 6px 0px 0px var(--color-border);
+      --shadow-offset-hover: 10px 10px 0px 0px var(--color-border);
+      --shadow-soft: 0 4px 24px rgba(0,0,0,0.06);
+
+      /* 字体栈 - 优先使用系统字体保证加载速度 */
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "SF Mono", "Fira Code", "Noto Sans Mono", monospace;
+
+      /* 动效参数 */
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+      --duration-fast: 0.2s;
+      --duration-normal: 0.4s;
+      --duration-slow: 0.8s;
+    }
+
+    /* --------------------------------------------
+       基础重置与全局样式
+       -------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 科技感网格背景 - 参考 NEXORASIM */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(10,10,10,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10,10,10,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 浮动装饰几何图形 - 参考 NEXORASIM */
+    .deco-shape {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.15;
+      animation: float 20s var(--ease-in-out-sine) infinite;
+    }
+    .deco-shape--1 {
+      top: 15%;
+      left: 5%;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--color-border);
+      transform: rotate(45deg);
+      animation-delay: 0s;
+    }
+    .deco-shape--2 {
+      top: 60%;
+      right: 8%;
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--color-border);
+      border-radius: 50%;
+      animation-delay: -5s;
+      animation-duration: 25s;
+    }
+    .deco-shape--3 {
+      bottom: 20%;
+      left: 10%;
+      width: 30px;
+      height: 30px;
+      background: var(--color-accent-olive);
+      animation-delay: -10s;
+      animation-duration: 18s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(10deg); }
+    }
+
+    /* --------------------------------------------
+       排版系统
+       -------------------------------------------- */
+    h1, h2, h3, h4 {
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #0A0A0A 0%, #4A4A4A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* --------------------------------------------
+       布局容器
+       -------------------------------------------- */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+      position: relative;
+      z-index: 2;
+    }
+
+    .section {
+      padding: var(--space-3xl) 0;
+      position: relative;
+    }
+
+    /* --------------------------------------------
+       通用组件：粗边框卡片（参考 POSTCRAFT）
+       -------------------------------------------- */
+    .card-brutalist {
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-offset);
+      transition: transform var(--duration-normal) var(--ease-out-expo),
+                  box-shadow var(--duration-normal) var(--ease-out-expo);
+    }
+    .card-brutalist:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-offset-hover);
+    }
+
+    /* --------------------------------------------
+       通用组件：按钮
+       -------------------------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-lg);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: var(--border-thick);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn--primary {
+      background: var(--color-text-primary);
+      color: var(--color-surface);
+      box-shadow: 4px 4px 0px 0px var(--color-accent-olive);
+    }
+    .btn--primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0px 0px var(--color-accent-olive);
+    }
+
+    .btn--secondary {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      box-shadow: 4px 4px 0px 0px var(--color-border);
+    }
+    .btn--secondary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0px 0px var(--color-border);
+      background: var(--color-accent-olive-light);
+    }
+
+    .btn--large {
+      padding: var(--space-md) var(--space-xl);
+      font-size: 1.125rem;
+      border-radius: var(--radius-xl);
+    }
+
+    /* --------------------------------------------
+       通用组件：标签/徽章
+       -------------------------------------------- */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 2px solid var(--color-border);
+      border-radius: 100px;
+      background: var(--color-surface);
+    }
+
+    /* --------------------------------------------
+       滚动进入动画系统（Intersection Observer 触发）
+       -------------------------------------------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity var(--duration-slow) var(--ease-out-expo),
+                  transform var(--duration-slow) var(--ease-out-expo);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal--delay-1 { transition-delay: 0.1s; }
+    .reveal--delay-2 { transition-delay: 0.2s; }
+    .reveal--delay-3 { transition-delay: 0.3s; }
+    .reveal--delay-4 { transition-delay: 0.4s; }
+
+    /* --------------------------------------------
+       第一节：首屏区 (Hero)
+       -------------------------------------------- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .hero .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero__eyebrow {
+      display: inline-block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-accent-olive);
+      margin-bottom: var(--space-md);
+      padding: var(--space-xs) var(--space-sm);
+      border: 2px solid var(--color-accent-olive);
+      border-radius: 100px;
+    }
+
+    .hero__title {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: var(--space-lg);
+      max-width: 900px;
+    }
+
+    .hero__subtitle {
+      font-size: clamp(1.125rem, 2vw, 1.5rem);
+      color: var(--color-text-secondary);
+      max-width: 680px;
+      margin-bottom: var(--space-2xl);
+      line-height: 1.7;
+    }
+
+    /* 动态数据标牌 */
+    .hero__stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (min-width: 768px) {
+      .hero__stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      text-align: left;
+      box-shadow: var(--shadow-offset);
+      transition: all var(--duration-normal) var(--ease-out-expo);
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-offset-hover);
+    }
+
+    .stat-card__number {
+      font-family: var(--font-mono);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+
+    .stat-card__label {
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    .stat-card:nth-child(1) { border-top: 6px solid #C13584; }
+    .stat-card:nth-child(2) { border-top: 6px solid #1DA1F2; }
+    .stat-card:nth-child(3) { border-top: 6px solid var(--color-accent-olive); }
+    .stat-card:nth-child(4) { border-top: 6px solid #FF6B6B; }
+
+    /* 滚动指示器 */
+    .scroll-indicator {
+      position: absolute;
+      bottom: var(--space-xl);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .scroll-indicator__arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 3px solid var(--color-border);
+      border-bottom: 3px solid var(--color-border);
+      transform: rotate(45deg);
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* --------------------------------------------
+       第二节：问题速览区 (Overview)
+       -------------------------------------------- */
+    .overview {
+      background: var(--color-surface);
+      border-top: var(--border-thick);
+      border-bottom: var(--border-thick);
+    }
+
+    .overview__quote {
+      font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      font-style: italic;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto var(--space-2xl);
+      color: var(--color-text-primary);
+      position: relative;
+      padding: 0 var(--space-lg);
+    }
+    .overview__quote::before {
+      content: """;
+      position: absolute;
+      top: -0.5em;
+      left: 0;
+      font-size: 6rem;
+      color: var(--color-accent-olive-light);
+      font-family: Georgia, serif;
+      line-height: 1;
+      z-index: -1;
+    }
+
+    .overview__text {
+      font-size: 1.0625rem;
+      color: var(--color-text-secondary);
+      max-width: 760px;
+      margin: 0 auto var(--space-2xl);
+      line-height: 1.8;
+      text-align: justify;
+    }
+
+    /* 圆环图区域 */
+    .overview__charts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (min-width: 768px) {
+      .overview__charts {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .chart-ring {
+      background: var(--color-bg);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+      box-shadow: var(--shadow-offset);
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .chart-ring:hover {
+      transform: translateY(-4px);
+    }
+
+    .chart-ring__svg {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto var(--space-sm);
+      transform: rotate(-90deg);
+    }
+
+    .chart-ring__track {
+      fill: none;
+      stroke: #E5E5E5;
+      stroke-width: 8;
+    }
+
+    .chart-ring__progress {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 2s var(--ease-out-expo);
+    }
+
+    .chart-ring__number {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+
+    .chart-ring__label {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+    }
+
+    .chart-ring__sublabel {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* 简化版圆环卡片 - 纯文本 */
+    .chart-ring--compact {
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-sm);
+      padding: var(--space-xs) var(--space-sm);
+      text-align: left;
+      box-shadow: var(--shadow-offset);
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .chart-ring--compact:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-offset-hover);
+    }
+    .chart-ring--compact .chart-ring__label {
+      font-size: 1rem;
+      color: var(--color-text-primary);
+      font-weight: 700;
+      font-family: var(--font-sans);
+    }
+    .chart-ring--compact .chart-ring__sublabel {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .overview__charts .chart-ring--compact {
+      width: 100%;
+    }
+
+    /* 关键事实专栏 */
+    .facts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    @media (min-width: 768px) {
+      .facts-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .fact-item {
+      display: flex;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      box-shadow: 4px 4px 0px 0px var(--color-border);
+    }
+
+    .fact-item__icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--color-text-primary);
+      color: var(--color-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .fact-item__text {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    /* --------------------------------------------
+       第三节：全球治理困境区 (Governance)
+       -------------------------------------------- */
+    .governance__header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .governance__title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: var(--space-sm);
+    }
+
+    .governance__subtitle {
+      color: var(--color-text-secondary);
+      font-size: 1.125rem;
+    }
+
+    /* 折叠卡片手风琴 */
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .accordion-item {
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-offset);
+      transition: box-shadow var(--duration-normal) var(--ease-out-expo);
+    }
+
+    .accordion-item.is-open {
+      box-shadow: var(--shadow-offset-hover);
+    }
+
+    .accordion-header {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      font-family: var(--font-sans);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      transition: background var(--duration-fast);
+    }
+
+    .accordion-header:hover {
+      background: var(--color-accent-olive-light);
+    }
+
+    .accordion-header__num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--color-text-primary);
+      color: var(--color-surface);
+      border-radius: 50%;
+      font-size: 0.875rem;
+      font-family: var(--font-mono);
+      margin-right: var(--space-sm);
+      flex-shrink: 0;
+    }
+
+    .accordion-header__title {
+      flex: 1;
+    }
+
+    .accordion-header__icon {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      flex-shrink: 0;
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .accordion-header__icon::before,
+    .accordion-header__icon::after {
+      content: "";
+      position: absolute;
+      background: var(--color-border);
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .accordion-header__icon::before {
+      width: 2px;
+      height: 14px;
+      top: 5px;
+      left: 11px;
+    }
+    .accordion-header__icon::after {
+      width: 14px;
+      height: 2px;
+      top: 11px;
+      left: 5px;
+    }
+
+    .accordion-item.is-open .accordion-header__icon::before {
+      transform: rotate(90deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--duration-slow) var(--ease-out-expo),
+                  padding var(--duration-slow) var(--ease-out-expo);
+    }
+
+    .accordion-item.is-open .accordion-content {
+      max-height: 600px;
+      padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);
+    }
+
+    .accordion-content__inner {
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+      font-size: 0.9375rem;
+      border-top: 1px dashed #DDD;
+      padding-top: var(--space-md);
+    }
+
+    .accordion-content__inner ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .accordion-content__inner li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .accordion-content__inner li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--color-accent-olive);
+      font-weight: 700;
+    }
+
+    /* --------------------------------------------
+       第四节：凯斯勒综合征模拟区 (Kessler)
+       -------------------------------------------- */
+    .kessler {
+      background: var(--color-text-primary);
+      color: var(--color-surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .kessler::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .kessler__header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+      position: relative;
+      z-index: 2;
+    }
+
+    .kessler__title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      color: var(--color-surface);
+      margin-bottom: var(--space-sm);
+    }
+
+    .kessler__desc {
+      color: rgba(255,255,255,0.6);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Canvas 模拟容器 */
+    .kessler__simulation {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto var(--space-xl);
+      aspect-ratio: 4/3;
+      background: rgba(255,255,255,0.03);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    #kesslerCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .kessler__controls {
+      position: absolute;
+      bottom: var(--space-md);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: var(--space-sm);
+      z-index: 10;
+    }
+
+    .btn--kessler {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: none;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+    .btn--kessler:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    .btn--kessler:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .kessler__caption {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+      font-size: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .kessler__caption strong {
+      color: var(--color-surface);
+    }
+
+    /* --------------------------------------------
+       第五节：可行的治理路径区 (Solutions)
+       -------------------------------------------- */
+    .solutions__header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .solutions__title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* 可拖拽卡片滑块 */
+    .slider-container {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: var(--space-xl);
+    }
+
+    .slider {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: var(--space-sm) 0;
+      cursor: grab;
+      scrollbar-width: none;
+    }
+    .slider::-webkit-scrollbar {
+      display: none;
+    }
+    .slider:active {
+      cursor: grabbing;
+    }
+
+    .slider-card {
+      flex: 0 0 85%;
+      max-width: 380px;
+      scroll-snap-align: center;
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-offset);
+      transition: transform var(--duration-normal) var(--ease-out-expo);
+      user-select: none;
+    }
+    .slider-card:hover {
+      transform: translateY(-4px);
+    }
+
+    @media (min-width: 768px) {
+      .slider-card {
+        flex: 0 0 calc(33.333% - var(--space-md) * 2/3);
+        scroll-snap-align: start;
+      }
+    }
+
+    .slider-card__num {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-accent-olive-light);
+      line-height: 1;
+      margin-bottom: var(--space-sm);
+    }
+
+    .slider-card__title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      line-height: 1.3;
+    }
+
+    .slider-card__body {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    .slider-card__body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .slider-card__body li {
+      position: relative;
+      padding-left: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .slider-card__body li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--color-accent-olive);
+      font-weight: 700;
+    }
+
+    /* 滑块拖拽提示 */
+    .slider-hint {
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+    }
+
+    .slider-hint__arrow {
+      animation: slideHint 1.5s ease-in-out infinite;
+    }
+
+    @keyframes slideHint {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(6px); }
+    }
+
+    /* 争议标注 */
+    .disclaimer {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--space-md);
+      background: #FFF8E1;
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+      box-shadow: 4px 4px 0px 0px var(--color-border);
+    }
+
+    .disclaimer__icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .disclaimer__text {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* --------------------------------------------
+       第六节：我们能做什么 (Action)
+       -------------------------------------------- */
+    .action {
+      background: var(--color-surface);
+      border-top: var(--border-thick);
+    }
+
+    .action__header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .action__title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* 行动入口卡片 */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (min-width: 768px) {
+      .action-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .action-card {
+      background: var(--color-bg);
+      border: var(--border-thick);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-offset);
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+    .action-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-offset-hover);
+      background: var(--color-surface);
+    }
+
+    .action-card__icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-sm);
+      display: block;
+    }
+
+    .action-card__title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+
+    .action-card__desc {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* 虚拟承诺按钮区域 */
+    .pledge {
+      text-align: center;
+      padding: var(--space-2xl) var(--space-md);
+      background: var(--color-text-primary);
+      border: var(--border-thick);
+      border-radius: var(--radius-lg);
+      color: var(--color-surface);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-offset);
+    }
+
+    .pledge::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+
+    .pledge__title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+      position: relative;
+      z-index: 2;
+    }
+
+    .pledge__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-xl);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: none;
+      border-radius: var(--radius-xl);
+      font-family: var(--font-sans);
+      font-size: 1.125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out-expo);
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .pledge__btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .pledge__btn:active {
+      transform: scale(0.98);
+    }
+
+    .pledge__count {
+      margin-top: var(--space-md);
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.7);
+      position: relative;
+      z-index: 2;
+    }
+
+    .pledge__count strong {
+      color: var(--color-surface);
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+    }
+
+    /* 点击后的粒子爆发效果 */
+    .particle-burst {
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .particle-burst__dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent-olive);
+      border-radius: 50%;
+      animation: burst 0.8s var(--ease-out-expo) forwards;
+    }
+
+    @keyframes burst {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    /* --------------------------------------------
+       页脚 (Footer)
+       -------------------------------------------- */
+    .footer {
+      padding: var(--space-2xl) 0 var(--space-xl);
+      border-top: var(--border-thick);
+      background: var(--color-bg);
+    }
+
+    .footer__text {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto var(--space-xl);
+      line-height: 1.8;
+    }
+
+    .footer__call {
+      text-align: center;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-xl);
+      padding: var(--space-md);
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+    }
+
+    .footer__share {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      padding: var(--space-xs) var(--space-md);
+      background: var(--color-surface);
+      border: var(--border-thick);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      box-shadow: 3px 3px 0px 0px var(--color-border);
+    }
+    .share-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px 0px var(--color-border);
+      background: var(--color-accent-olive-light);
+    }
+
+    /* --------------------------------------------
+       响应式调整
+       -------------------------------------------- */
+    @media (max-width: 767px) {
+      :root {
+        --space-3xl: 4rem;
+        --space-2xl: 3rem;
+      }
+
+      .card-brutalist:hover,
+      .stat-card:hover,
+      .action-card:hover,
+      .slider-card:hover {
+        transform: none;
+      }
+    }
+
+    /* --------------------------------------------
+       辅助类
+       -------------------------------------------- */
+    .text-center { text-align: center; }
+    .mb-sm { margin-bottom: var(--space-sm); }
+    .mb-md { margin-bottom: var(--space-md); }
+    .mb-lg { margin-bottom: var(--space-lg); }
+    .mb-xl { margin-bottom: var(--space-xl); }
+  </style>
+</head>
+
+<body>
+  <!-- 浮动装饰几何图形 -->
+  <div class="deco-shape deco-shape--1"></div>
+  <div class="deco-shape deco-shape--2"></div>
+  <div class="deco-shape deco-shape--3"></div>
+
+  <!-- ============================================ -->
+  <!-- 第一节：首屏区 (Hero)                         -->
+  <!-- ============================================ -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero__eyebrow reveal is-visible">太空治理专题</div>
+
+      <h1 class="hero__title reveal reveal--delay-1 is-visible">
+        外空治理困境：<br>一场无声的圈地运动
+      </h1>
+
+      <p class="hero__subtitle reveal reveal--delay-2 is-visible">
+        地球外层空间的近地轨道正成为人类历史上最拥挤、最缺乏治理的全球公域。
+      </p>
+
+      <!-- 动态数据标牌 -->
+      <div class="hero__stats">
+        <div class="stat-card reveal reveal--delay-1 is-visible" data-count="45000" data-suffix="+">
+          <span class="stat-card__number" data-animated="true">45,000+</span>
+          <span class="stat-card__label">可被追踪的空间碎片</span>
+        </div>
+        <div class="stat-card reveal reveal--delay-2 is-visible" data-count="12000" data-suffix="+">
+          <span class="stat-card__number" data-animated="true">12,000+</span>
+          <span class="stat-card__label">现存活跃人造卫星</span>
+        </div>
+        <div class="stat-card reveal reveal--delay-3 is-visible" data-count="100000" data-suffix="+">
+          <span class="stat-card__number" data-animated="true">100,000+</span>
+          <span class="stat-card__label">2030年预计活跃卫星</span>
+        </div>
+        <div class="stat-card reveal reveal--delay-4 is-visible" data-count="100" data-suffix="%">
+          <span class="stat-card__number" data-animated="true">100%</span>
+          <span class="stat-card__label">无统一运行法规的近地轨道</span>
+        </div>
+      </div>
+
+      <a href="file:///C:/Users/%E6%9D%8E%E4%BD%B3%E8%B1%AB/Desktop/%E6%96%B0%E5%BB%BA%20%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3.html#overview" class="btn btn--primary btn--large reveal reveal--delay-3">
+        <span>↓</span>
+        <span>了解这场全球治理危机</span>
+      </a>
+    </div>
+
+    <!-- 滚动指示器 -->
+    <a href="file:///C:/Users/%E6%9D%8E%E4%BD%B3%E8%B1%AB/Desktop/%E6%96%B0%E5%BB%BA%20%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3.html#overview" class="scroll-indicator" aria-label="向下滚动">
+      <span>向下探索</span>
+      <div class="scroll-indicator__arrow"></div>
+    </a>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 第二节：问题速览区 (Overview)                 -->
+  <!-- ============================================ -->
+  <section class="section overview" id="overview">
+    <div class="container">
+      <blockquote class="overview__quote reveal">
+        "近地轨道是属于全人类的有限资源，但我们正在以对待'无主之地'的方式开发它。"
+      </blockquote>
+
+      <p class="overview__text reveal reveal--delay-1">
+        2009年，美国报废通信卫星与俄罗斯在轨卫星在西伯利亚上空相撞，瞬间产生2000多块太空碎片；2021年，欧洲航天局“风神”卫星因轨道数据误差，不得不主动变轨以避免与星链卫星相撞。随着巨型星座部署，这类潜在危险接近事件每年都将以指数级增长。一次碰撞产生的数百甚至上千块碎片，不仅会使该轨道区域被碎片封锁数十年，浪费宝贵的近地资源，还会增加碎片清理的规划和区域，意味着世界各国需要承担的治理成本上升，进一步为全球合作的深空治理制造困难。
+      </p>
+
+      <!-- 圆环图数据展示 -->
+      <div class="overview__charts reveal reveal--delay-2">
+        <!-- 星链 -->
+        <div class="chart-ring chart-ring--compact">
+          <div class="chart-ring__label">星链（Starlink）</div>
+          <div class="chart-ring__sublabel">约7,000颗在轨，计划42,000颗</div>
+        </div>
+
+        <!-- 千帆星座 -->
+        <div class="chart-ring chart-ring--compact">
+          <div class="chart-ring__label">千帆星座（中国）</div>
+          <div class="chart-ring__sublabel">计划超14,000颗</div>
+        </div>
+
+        <!-- 柯伊伯计划 -->
+        <div class="chart-ring chart-ring--compact">
+          <div class="chart-ring__label">柯伊伯计划（Amazon）</div>
+          <div class="chart-ring__sublabel">计划超3,000颗</div>
+        </div>
+
+        <!-- OneWeb -->
+        <div class="chart-ring chart-ring--compact">
+          <div class="chart-ring__label">OneWeb</div>
+          <div class="chart-ring__sublabel">约650颗在轨，将按计划扩展</div>
+        </div>
+      </div>
+
+      <!-- 关键事实专栏 -->
+      <div class="facts-grid reveal reveal--delay-3">
+        <div class="fact-item">
+          <div class="fact-item__icon">📡</div>
+          <div class="fact-item__text">
+            当前超过<strong>50%</strong>的近地轨道有效载荷由商业公司运营
+          </div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-item__icon">⚖️</div>
+          <div class="fact-item__text">
+            国际电信联盟（ITU）仅负责频率和轨道位置协调，无权限制数量或清理碎片
+          </div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-item__icon">🛰️</div>
+          <div class="fact-item__text">
+            <strong>80%</strong>的卫星在寿命结束后不具备主动离轨能力
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 第三节：全球治理困境区 (Governance)             -->
+  <!-- ============================================ -->
+  <section class="section governance" id="governance">
+    <div class="container">
+      <div class="governance__header reveal">
+        <h2 class="governance__title">为何国际社会至今束手无策？</h2>
+        <p class="governance__subtitle">四个治理空缺，构成当前外空治理的结构性困境</p>
+      </div>
+
+      <div class="accordion reveal reveal--delay-1">
+        <!-- 卡片 1 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-header__num">1</span>
+            <span class="accordion-header__title">条约老化与责任模糊</span>
+            <span class="accordion-header__icon" aria-hidden="true"></span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content__inner">
+              <ul>
+                <li>当前外空活动的法律基石是冷战时期达成的《外层空间条约》，距今已有近60年历史。条约仅寥寥数页，虽规定了国家应对其航天活动负责，包括商业实体，但并未提及空间碎片和空间交通管理问题以及明确"碰撞责任"如何分配。</li>
+                <li>联合国在1972年通过了责任公约，全称《空间物体造成损害的国际责任公约》，但仅覆盖"一国对另一国"的损害，对多国碎片连锁反应、非政府运营商之间的纠纷无有效仲裁机制。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片 2 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-header__num">2</span>
+            <span class="accordion-header__title">卫星入轨的过时规则</span>
+            <span class="accordion-header__icon" aria-hidden="true"></span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content__inner">
+              <ul>
+                <li>卫星的发射入轨需提前向国际电信联盟（ITU）申报，而ITU采用"先到先得"的原则，最初是为了确保全球无线电频谱和卫星轨道资源的合理、公平、有效使用，协调各国频率应用以避免干扰和轨道碰撞，但如今已经演变成了一场太空圈地运动。大国的巨型星座规划纷纷通过批量申请占据优势，中小国家获取轨道资源的空间被压缩。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片 3 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-header__num">3</span>
+            <span class="accordion-header__title">监管与信任的缺乏</span>
+            <span class="accordion-header__icon" aria-hidden="true"></span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content__inner">
+              <ul>
+                <li>联合国和平利用外层空间委员会（COPUOS）只能制定不具法律约束力的指南，如《空间碎片减缓指南》，但缺乏能强制执行的监管机构，自愿性指南在商业和国家竞争面前往往被忽略。</li>
+                <li>现有的太空态势感知系统分散在美国、欧洲、俄罗斯、中国等，数据标准不统一，民用化访问受限，各国之间缺乏协调，信息碎片化；多数卫星运营商不充分共享高精度轨道数据，相互缺乏共享意识和信任。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片 4 -->
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-header__num">4</span>
+            <span class="accordion-header__title">碎片清理的技术与经济瓶颈</span>
+            <span class="accordion-header__icon" aria-hidden="true"></span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-content__inner">
+              <ul>
+                <li>尽管多家公司和航天机构正在研发碎片清理技术，提出并试验了包括激光烧蚀法、机械臂捕获技术、飞网捕捉系统在内的多种碎片治理技术，但大规模工程化应用仍面临成本高昂、政治敏感以及可能产生二次碎片的风险。谁有权移除他国碎片？清除碎片的成本谁来承担？</li>
+                <li>目前没有任何国际条约强制要求运营商为碎片清理付费或投保，"谁污染谁治理"的原则在太空领域缺乏执行机制。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 第四节：凯斯勒综合征模拟区 (Kessler)            -->
+  <!-- ============================================ -->
+  <section class="section kessler" id="kessler">
+    <div class="container">
+      <div class="kessler__header reveal">
+        <h2 class="kessler__title">最坏的剧本：碎片连锁反应</h2>
+        <p class="kessler__desc">
+          点击"开始模拟"，观察一颗卫星爆炸如何引发不可控的级联效应
+        </p>
+      </div>
+
+      <div class="kessler__simulation reveal reveal--delay-1">
+        <canvas id="kesslerCanvas" width="1400" height="1050" style="width: 700px; height: 525px;"></canvas>
+        <div class="kessler__controls">
+          <button class="btn--kessler" id="kesslerStart">▶ 开始模拟</button>
+          <button class="btn--kessler" id="kesslerReset">↺ 重置</button>
+        </div>
+      </div>
+
+      <div class="kessler__caption reveal reveal--delay-2">
+        <p>
+          1978年，NASA科学家唐纳德·凯斯勒提出：当轨道物体密度达到某个阈值，一次碰撞会引发不可控的级联效应。届时，任何新卫星都将被碎片击毁，近地轨道可能关闭数十年。
+        </p>
+        <p style="margin-top: 1rem;">
+          <strong>一些模拟显示，我们已经进入临界区间的边缘。</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 第五节：可行的治理路径区 (Solutions)             -->
+  <!-- ============================================ -->
+  <section class="section solutions" id="solutions">
+    <div class="container">
+      <div class="solutions__header reveal">
+        <h2 class="solutions__title">可行的治理路径</h2>
+        <p class="governance__subtitle">三个提案方向，可左右拖拽查看</p>
+      </div>
+
+      <div class="slider-hint reveal">
+        <span>← 左右拖拽或滑动切换 →</span>
+        <span class="slider-hint__arrow">⇄</span>
+      </div>
+
+      <div class="slider-container reveal reveal--delay-1">
+        <div class="slider" id="solutionsSlider">
+          <!-- 提案 1 -->
+          <div class="slider-card">
+            <div class="slider-card__num">01</div>
+            <h3 class="slider-card__title">收取轨道使用费与保证金</h3>
+            <div class="slider-card__body">
+              <ul>
+                <li>仿照碳排放交易或海洋捕捞配额</li>
+                <li>按卫星质量、轨道高度、停留时间收费，费用进入"轨道清理基金"</li>
+                <li>对未在寿命内离轨的运营方，扣留保证金</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 提案 2 -->
+          <div class="slider-card">
+            <div class="slider-card__num">02</div>
+            <h3 class="slider-card__title">建立联合国主导的国际太空交通管理局</h3>
+            <div class="slider-card__body">
+              <ul>
+                <li>借鉴国际海事组织（IMO）和国际民用航空组织（ICAO）模式</li>
+                <li>制定强制性避碰规则、通用数据格式、实时协调平台</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 提案 3 -->
+          <div class="slider-card">
+            <div class="slider-card__num">03</div>
+            <h3 class="slider-card__title">明确授权与可持续发展标准</h3>
+            <div class="slider-card__body">
+              <ul>
+                <li>各国政府授权发射许可时，应对卫星的成功离轨概率及离轨时间有强制要求</li>
+                <li>对未达标准的运营商实施贸易或通信牌照限制</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 争议标注 -->
+      <div class="disclaimer reveal reveal--delay-2">
+        <span class="disclaimer__icon">⚠️</span>
+        <p class="disclaimer__text">
+          <strong>争议提示：</strong>这些方案的推进会面临一定争议和困难：发展中国家担心费用与监管的公平，而大国将让渡部分共享数据和协调的权力，这些都是全球治理亟待解决的问题。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 第六节：我们能做什么 (Action)                  -->
+  <!-- ============================================ -->
+  <section class="section action" id="action">
+    <div class="container">
+      <div class="action__header reveal">
+        <h2 class="action__title">这不仅是政府的事务，你的关注就是动力</h2>
+      </div>
+
+      <div class="action-grid reveal reveal--delay-1">
+        <div class="action-card">
+          <span class="action-card__icon">🔭</span>
+          <h3 class="action-card__title">追问透明度</h3>
+          <p class="action-card__desc">
+            关注本国航天局或通信监管机构，支持公开卫星授权许可中的离轨计划，支持太空态势感知数据开源运动。
+          </p>
+        </div>
+
+        <div class="action-card">
+          <span class="action-card__icon">♻️</span>
+          <h3 class="action-card__title">选择负责任的运营商</h3>
+          <p class="action-card__desc">
+            如果你使用卫星互联网，查询该星座是否承诺运营卫星的离轨成功率，让市场回馈支撑可持续发展。
+          </p>
+        </div>
+
+        <div class="action-card">
+          <span class="action-card__icon">🗣️</span>
+          <h3 class="action-card__title">加入全球公域讨论</h3>
+          <p class="action-card__desc">
+            参与联合国外空委（COPUOS）年度会议的数字旁听或对政府组织的全球倡议给予更多关注，例如中国向联合国外空委提交了《太空交通管理办法》蓝皮书，首次提出"主动制动责任方"等治理概念，积极推动全球空间碎片治理体系建设。
+          </p>
+        </div>
+      </div>
+
+      <!-- 虚拟承诺 -->
+      <div class="pledge reveal reveal--delay-2" id="pledgeArea">
+        <h3 class="pledge__title">签署虚拟承诺：支持建立国际太空交通规则</h3>
+        <button class="pledge__btn" id="pledgeBtn">
+          <span>✍️</span>
+          <span>我支持建立轨道规则</span>
+        </button>
+        <p class="pledge__count">
+          已有 <strong id="pledgeCount">32,000</strong> 人加入
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 页脚 (Footer)                                 -->
+  <!-- ============================================ -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <p class="footer__text">
+        本页面基于联合国和平利用外层空间委员会（COPUOS）公开文件、国际宇航科学院（IAA）太空交通管理报告及主要航天国家提交的长期可持续性自愿国家行动报告编写。
+      </p>
+
+      <div class="footer__call">
+        我们呼吁：在碎片碰撞不可逆之前，为轨道建立规则。
+      </div>
+
+      <div class="footer__share">
+        <button class="share-btn" onclick="copyLink()">📋 复制链接</button>
+        <button class="share-btn" onclick="alert(&#39;请使用系统截图工具截取本页&#39;)">📸 截图分享</button>
+        <button class="share-btn" onclick="alert(&#39;知识卡片下载功能需后端支持，此处为UI示意&#39;)">💾 下载知识卡片</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================ -->
+  <!-- JavaScript 逻辑层                             -->
+  <!-- ============================================ -->
+  <script>
+    /* =============================================
+       1. 滚动进入动画系统 (Intersection Observer)
+       当元素进入视口时添加 is-visible 类触发 CSS 动画
+       ============================================= */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          // 触发数字计数动画
+          if (entry.target.classList.contains('stat-card')) {
+            animateCounter(entry.target.querySelector('.stat-card__number'));
+          }
+          // 触发圆环图动画
+          if (entry.target.classList.contains('chart-ring')) {
+            animateRing(entry.target);
+            animateCounter(entry.target.querySelector('.chart-ring__number'));
+          }
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* =============================================
+       2. 数字滚动计数动画
+       ============================================= */
+    function animateCounter(element) {
+      if (!element || element.dataset.animated === 'true') return;
+      element.dataset.animated = 'true';
+
+      const target = parseInt(element.dataset.target || element.parentElement.dataset.count);
+      const suffix = element.parentElement.dataset.suffix || '';
+      const duration = 2000;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // easeOutExpo
+        const ease = 1 - Math.pow(2, -10 * progress);
+        const current = Math.floor(ease * target);
+
+        if (target >= 1000) {
+          element.textContent = current.toLocaleString() + suffix;
+        } else {
+          element.textContent = current + suffix;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          if (target >= 1000) {
+            element.textContent = target.toLocaleString() + suffix;
+          } else {
+            element.textContent = target + suffix;
+          }
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
+    /* =============================================
+       3. SVG 圆环图动画
+       ============================================= */
+    function animateRing(ringElement) {
+      const progress = ringElement.querySelector('.chart-ring__progress');
+      if (!progress || progress.dataset.animated === 'true') return;
+      progress.dataset.animated = 'true';
+
+      const percent = parseFloat(progress.dataset.percent);
+      const circumference = 2 * Math.PI * 70; // r=70
+      const offset = circumference - (percent / 100 * circumference);
+
+      // 先重置为全空
+      progress.style.strokeDashoffset = circumference;
+      // 强制重绘
+      progress.getBoundingClientRect();
+      // 触发过渡动画到目标值
+      setTimeout(() => {
+        progress.style.strokeDashoffset = offset;
+      }, 100);
+    }
+
+    /* =============================================
+       4. 手风琴折叠卡片逻辑
+       ============================================= */
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.parentElement;
+        const isOpen = item.classList.contains('is-open');
+
+        // 关闭所有其他项（手风琴模式，如需要可同时打开多个请删除下面循环）
+        document.querySelectorAll('.accordion-item.is-open').forEach(openItem => {
+          if (openItem !== item) {
+            openItem.classList.remove('is-open');
+            openItem.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // 切换当前项
+        item.classList.toggle('is-open');
+        header.setAttribute('aria-expanded', !isOpen);
+      });
+    });
+
+    /* =============================================
+       5. 凯斯勒综合征 Canvas 模拟
+       纯前端粒子系统，展示碎片连锁反应
+       ============================================= */
+    const canvas = document.getElementById('kesslerCanvas');
+    const ctx = canvas.getContext('2d');
+    let animationId = null;
+    let satellites = [];
+    let debris = [];
+    let isSimulating = false;
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // 初始化卫星（沿轨道分布）
+    function initSatellites() {
+      satellites = [];
+      debris = [];
+      const centerX = canvas.getBoundingClientRect().width / 2;
+      const centerY = canvas.getBoundingClientRect().height / 2;
+      const orbits = [80, 120, 160];
+
+      orbits.forEach((radius, orbitIdx) => {
+        const count = 6 + orbitIdx * 3;
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+          satellites.push({
+            x: centerX + Math.cos(angle) * radius,
+            y: centerY + Math.sin(angle) * radius,
+            angle: angle,
+            radius: radius,
+            orbitSpeed: 0.002 * (1 + Math.random() * 0.5),
+            alive: true,
+            color: '#FFFFFF',
+            size: 4
+          });
+        }
+      });
+    }
+
+    initSatellites();
+
+    // 绘制地球
+    function drawEarth() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      // 地球本体
+      ctx.beginPath();
+      ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+      ctx.fillStyle = '#1E3A5F';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // 地球光晕
+      ctx.beginPath();
+      ctx.arc(cx, cy, 45, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(100,180,255,0.15)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // 绘制轨道线
+    function drawOrbits() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const orbits = [80, 120, 160];
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+
+      orbits.forEach(radius => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      ctx.setLineDash([]);
+    }
+
+    // 绘制卫星
+    function drawSatellites() {
+      satellites.forEach(sat => {
+        if (!sat.alive) return;
+
+        ctx.beginPath();
+        ctx.arc(sat.x, sat.y, sat.size, 0, Math.PI * 2);
+        ctx.fillStyle = sat.color;
+        ctx.fill();
+
+        // 卫星光晕
+        ctx.beginPath();
+        ctx.arc(sat.x, sat.y, sat.size + 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fill();
+      });
+    }
+
+    // 绘制碎片
+    function drawDebris() {
+      debris.forEach(d => {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+        ctx.fillStyle = d.color;
+        ctx.globalAlpha = d.life;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    // 更新位置
+    function update() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      // 更新卫星轨道位置
+      satellites.forEach(sat => {
+        if (!sat.alive) return;
+        sat.angle += sat.orbitSpeed;
+        sat.x = cx + Math.cos(sat.angle) * sat.radius;
+        sat.y = cy + Math.sin(sat.angle) * sat.radius;
+      });
+
+      // 更新碎片
+      debris.forEach((d, i) => {
+        d.x += d.vx;
+        d.y += d.vy;
+        d.life -= 0.003;
+
+        // 碎片碰撞检测（简化）
+        if (d.life > 0.5 && !d.hasCollided) {
+          satellites.forEach(sat => {
+            if (!sat.alive) return;
+            const dist = Math.hypot(d.x - sat.x, d.y - sat.y);
+            if (dist < 10) {
+              explodeSatellite(sat);
+              d.hasCollided = true;
+            }
+          });
+        }
+
+        if (d.life <= 0) {
+          debris.splice(i, 1);
+        }
+      });
+    }
+
+    // 卫星爆炸
+    function explodeSatellite(sat) {
+      sat.alive = false;
+
+      // 产生碎片
+      const fragmentCount = 15 + Math.floor(Math.random() * 10);
+      for (let i = 0; i < fragmentCount; i++) {
+        const angle = (Math.PI * 2 / fragmentCount) * i + Math.random() * 0.5;
+        const speed = 0.5 + Math.random() * 2;
+        debris.push({
+          x: sat.x,
+          y: sat.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 1 + Math.random() * 2,
+          color: `hsl(${0 + Math.random() * 40}, 100%, ${50 + Math.random() * 30}%)`,
+          life: 1,
+          hasCollided: false
+        });
+      }
+    }
+
+    // 主动触发初始爆炸
+    function triggerCascade() {
+      if (satellites.length === 0) return;
+      const target = satellites[Math.floor(satellites.length / 2)];
+      explodeSatellite(target);
+    }
+
+    // 渲染循环
+    function render() {
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      drawOrbits();
+      drawEarth();
+      drawSatellites();
+      drawDebris();
+
+      if (isSimulating) {
+        update();
+        // 随机触发更多爆炸以模拟连锁
+        if (Math.random() < 0.02 && debris.length > 5) {
+          const aliveSats = satellites.filter(s => s.alive);
+          if (aliveSats.length > 0) {
+            const target = aliveSats[Math.floor(Math.random() * aliveSats.length)];
+            explodeSatellite(target);
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(render);
+    }
+
+    render();
+
+    // 控制按钮
+    document.getElementById('kesslerStart').addEventListener('click', function() {
+      if (!isSimulating) {
+        isSimulating = true;
+        triggerCascade();
+        this.disabled = true;
+        this.textContent = '● 模拟进行中...';
+      }
+    });
+
+    document.getElementById('kesslerReset').addEventListener('click', function() {
+      isSimulating = false;
+      initSatellites();
+      const startBtn = document.getElementById('kesslerStart');
+      startBtn.disabled = false;
+      startBtn.textContent = '▶ 开始模拟';
+    });
+
+    /* =============================================
+       6. 解决方案区拖拽滑块
+       ============================================= */
+    const slider = document.getElementById('solutionsSlider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.style.cursor = 'grabbing';
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // 触摸支持
+    slider.addEventListener('touchstart', (e) => {
+      isDown = true;
+      startX = e.touches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    }, { passive: true });
+
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+      if (!isDown) return;
+      const x = e.touches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    }, { passive: true });
+
+    /* =============================================
+       7. 虚拟承诺按钮交互
+       ============================================= */
+    const pledgeBtn = document.getElementById('pledgeBtn');
+    const pledgeCount = document.getElementById('pledgeCount');
+    const pledgeArea = document.getElementById('pledgeArea');
+    let hasPledged = false;
+
+    pledgeBtn.addEventListener('click', (e) => {
+      if (hasPledged) return;
+      hasPledged = true;
+
+      // 更新计数
+      let count = 32000;
+      pledgeCount.textContent = count.toLocaleString();
+
+      // 按钮状态变化
+      pledgeBtn.innerHTML = '<span>✓</span><span>已签署承诺</span>';
+      pledgeBtn.style.background = 'var(--color-accent-olive)';
+      pledgeBtn.style.color = '#FFF';
+
+      // 粒子爆发效果
+      createParticleBurst(e.clientX, e.clientY);
+
+      // 数字递增动画
+      let current = 32000;
+      const target = 32001;
+      const increment = () => {
+        current++;
+        pledgeCount.textContent = current.toLocaleString();
+        if (current < target) {
+          setTimeout(increment, 50);
+        }
+      };
+      increment();
+    });
+
+    function createParticleBurst(x, y) {
+      const rect = pledgeArea.getBoundingClientRect();
+      const burst = document.createElement('div');
+      burst.className = 'particle-burst';
+      burst.style.left = (x - rect.left) + 'px';
+      burst.style.top = (y - rect.top) + 'px';
+
+      for (let i = 0; i < 12; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'particle-burst__dot';
+        const angle = (Math.PI * 2 / 12) * i;
+        const distance = 60 + Math.random() * 40;
+        dot.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        dot.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        dot.style.background = ['#8F9779', '#C13584', '#1DA1F2', '#FF9800'][Math.floor(Math.random() * 4)];
+        burst.appendChild(dot);
+      }
+
+      pledgeArea.appendChild(burst);
+      setTimeout(() => burst.remove(), 1000);
+    }
+
+    /* =============================================
+       8. 分享功能
+       ============================================= */
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('链接已复制到剪贴板');
+      }).catch(() => {
+        alert('复制失败，请手动复制地址栏链接');
+      });
+    }
+
+    /* =============================================
+       9. 平滑滚动优化
+       ============================================= */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* =============================================
+       10. 首屏数据自动触发（如果首屏已在视口内）
+       ============================================= */
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.hero .stat-card').forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          animateCounter(card.querySelector('.stat-card__number'));
+        }
+      });
+    });
+  </script>
+
+</body></html>

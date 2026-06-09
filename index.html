@@ -1528,84 +1528,144 @@
     const ctx = canvas.getContext('2d');
     let particles = [];
     let isSimulating = false;
+    const MAX_PARTICLES = 500;
+    const canvasWidth = 700;
+    const canvasHeight = 525;
+
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     function initSimulation() {
       particles = [];
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const baseRadius = 200;
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      const baseRadius = 80;
 
-      for (let i = 0; i < 50; i++) {
-        const angle = (i / 50) * Math.PI * 2;
-        const radius = baseRadius + (Math.random() - 0.5) * 100;
+      for (let i = 0; i < 30; i++) {
+        const angle = (i / 30) * Math.PI * 2;
+        const radius = baseRadius + (Math.random() - 0.5) * 60;
         particles.push({
           x: centerX + Math.cos(angle) * radius,
           y: centerY + Math.sin(angle) * radius,
-          vx: -Math.sin(angle) * 0.3,
-          vy: Math.cos(angle) * 0.3,
-          radius: 3 + Math.random() * 2,
-          color: '#ffffff'
+          vx: -Math.sin(angle) * 0.4,
+          vy: Math.cos(angle) * 0.4,
+          radius: 2 + Math.random() * 2,
+          color: '#ffffff',
+          alpha: 1
         });
       }
+      drawInitial();
+    }
+
+    function drawInitial() {
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
     }
 
     function explode(x, y) {
-      const newParticles = [];
-      for (let i = 0; i < 15; i++) {
-        const angle = (i / 15) * Math.PI * 2;
-        newParticles.push({
+      if (particles.length >= MAX_PARTICLES) return;
+      const count = Math.min(8, MAX_PARTICLES - particles.length);
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+        const speed = 1.5 + Math.random() * 1.5;
+        particles.push({
           x: x,
           y: y,
-          vx: Math.cos(angle) * (2 + Math.random() * 2),
-          vy: Math.sin(angle) * (2 + Math.random() * 2),
-          radius: 2 + Math.random() * 2,
-          color: '#ff6b6b'
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: 1.5 + Math.random() * 1.5,
+          color: '#ff6b6b',
+          alpha: 1,
+          isDebris: true
         });
       }
-      particles.push(...newParticles);
     }
 
     function updateSimulation() {
       if (!isSimulating) return;
 
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      particles.forEach((p, index) => {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -0.9;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -0.9;
+        if (p.x < 0 || p.x > canvasWidth) p.vx *= -0.8;
+        if (p.y < 0 || p.y > canvasHeight) p.vy *= -0.8;
 
-        if (Math.random() < 0.001 && p.color === '#ffffff') {
+        p.vx *= 0.998;
+        p.vy *= 0.998;
+
+        if (p.isDebris) {
+          p.alpha -= 0.003;
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+        }
+
+        if (!p.isDebris && Math.random() < 0.003) {
           explode(p.x, p.y);
-          particles.splice(index, 1);
+          particles.splice(i, 1);
+          continue;
         }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
         ctx.fill();
+        ctx.globalAlpha = 1;
+      }
 
-        particles.slice(index + 1).forEach(p2 => {
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < p.radius + p2.radius) {
-            explode(p.x, p.y);
-            particles.splice(index, 1);
-            particles.splice(particles.indexOf(p2), 1);
+          if (dist < p1.radius + p2.radius) {
+            explode(p1.x, p1.y);
+            particles.splice(j, 1);
+            particles.splice(i, 1);
+            i--;
+            break;
           }
-        });
-      });
+        }
+      }
 
       requestAnimationFrame(updateSimulation);
     }
 
     document.getElementById('kesslerStart').addEventListener('click', () => {
       if (!isSimulating) {
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        particles = [];
+        for (let i = 0; i < 30; i++) {
+          const angle = (i / 30) * Math.PI * 2;
+          const radius = 80 + (Math.random() - 0.5) * 60;
+          particles.push({
+            x: canvasWidth / 2 + Math.cos(angle) * radius,
+            y: canvasHeight / 2 + Math.sin(angle) * radius,
+            vx: -Math.sin(angle) * 0.4,
+            vy: Math.cos(angle) * 0.4,
+            radius: 2 + Math.random() * 2,
+            color: '#ffffff',
+            alpha: 1
+          });
+        }
         isSimulating = true;
         updateSimulation();
       }
@@ -1613,8 +1673,6 @@
 
     document.getElementById('kesslerReset').addEventListener('click', () => {
       isSimulating = false;
-      ctx.fillStyle = 'rgba(10, 10, 10, 1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
       initSimulation();
     });
 

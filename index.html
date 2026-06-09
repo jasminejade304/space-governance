@@ -1300,14 +1300,14 @@
       <div class="kessler__header reveal is-visible">
         <h2 class="kessler__title">最坏的剧本：碎片连锁反应</h2>
         <p class="kessler__desc">
-          一颗卫星爆炸如何引发不可控的级联效应
+          点击"开始模拟"，观察一颗卫星爆炸如何引发不可控的级联效应
         </p>
       </div>
 
       <div class="kessler__simulation reveal reveal--delay-1 is-visible">
         <canvas id="kesslerCanvas"></canvas>
         <div class="kessler__controls">
-          <button class="btn--kessler" id="kesslerReset">↺ 重播动画</button>
+          <button class="btn--kessler" id="kesslerReset">↺ 重播</button>
         </div>
       </div>
 
@@ -1528,24 +1528,28 @@
     function initKesslerSimulation() {
       const canvas = document.getElementById('kesslerCanvas');
       const ctx = canvas.getContext('2d');
-      let particles = [];
-      let isSimulating = false;
-      let animationId = null;
       const canvasWidth = 700;
       const canvasHeight = 525;
 
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
+      let animationId = null;
+      let satellites = [];
+      let debris = [];
+      let explosions = [];
+      let currentPhase = 0;
+      let frameCount = 0;
+      let isAnimating = true;
+
       function drawEarth() {
         const centerX = canvasWidth / 2;
         const centerY = canvasHeight / 2;
-        const earthRadius = 45;
+        const earthRadius = 50;
 
         const gradient = ctx.createRadialGradient(centerX - 15, centerY - 15, 0, centerX, centerY, earthRadius);
-        gradient.addColorStop(0, '#5a9fe9');
-        gradient.addColorStop(0.4, '#3d7bc9');
-        gradient.addColorStop(0.7, '#2d5a8a');
+        gradient.addColorStop(0, '#4a90d9');
+        gradient.addColorStop(0.5, '#2d5a8a');
         gradient.addColorStop(1, '#1a3a5c');
 
         ctx.beginPath();
@@ -1555,209 +1559,184 @@
 
         ctx.beginPath();
         ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.lineWidth = 2;
         ctx.stroke();
       }
 
-      function drawGrid() {
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      function drawOrbitRing(radius) {
+        ctx.beginPath();
+        ctx.arc(canvasWidth / 2, canvasHeight / 2, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
         ctx.lineWidth = 1;
-
-        const gridSize = 30;
-        for (let x = 0; x < canvasWidth; x += gridSize) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, canvasHeight);
-          ctx.stroke();
-        }
-        for (let y = 0; y < canvasHeight; y += gridSize) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(canvasWidth, y);
-          ctx.stroke();
-        }
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
 
-      function resetParticles() {
-        particles = [];
+      function initSatellites() {
+        satellites = [];
+        debris = [];
+        explosions = [];
+        currentPhase = 0;
+        frameCount = 0;
+        isAnimating = true;
+
         const centerX = canvasWidth / 2;
         const centerY = canvasHeight / 2;
 
-        for (let i = 0; i < 20; i++) {
-          const angle = (i / 20) * Math.PI * 2;
-          const radius = 90 + (Math.random() - 0.5) * 40;
-          const speed = 0.3 + Math.random() * 0.15;
-          particles.push({
-            x: centerX + Math.cos(angle) * radius,
-            y: centerY + Math.sin(angle) * radius,
-            vx: -Math.sin(angle) * speed,
-            vy: Math.cos(angle) * speed,
-            radius: 3 + Math.random() * 2,
-            color: '#ffffff',
-            alpha: 1,
-            isSatellite: true
-          });
+        for (let i = 0; i < 3; i++) {
+          const orbitRadius = 90 + i * 35;
+          const satellitesInOrbit = 8 - i * 2;
+          
+          for (let j = 0; j < satellitesInOrbit; j++) {
+            const angle = (j / satellitesInOrbit) * Math.PI * 2;
+            satellites.push({
+              orbitRadius: orbitRadius,
+              orbitAngle: angle,
+              orbitSpeed: 0.008 - i * 0.001,
+              x: centerX + Math.cos(angle) * orbitRadius,
+              y: centerY + Math.sin(angle) * orbitRadius,
+              radius: 4,
+              color: '#ffffff',
+              isExploded: false
+            });
+          }
         }
       }
 
-      function drawFrame() {
-        ctx.fillStyle = '#0a0a0f';
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        drawGrid();
-        drawEarth();
-
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.alpha;
-          ctx.fill();
-          ctx.globalAlpha = 1;
+      function createExplosion(x, y) {
+        explosions.push({
+          x: x,
+          y: y,
+          radius: 5,
+          maxRadius: 40,
+          alpha: 1,
+          frames: 20
         });
-      }
 
-      function explode(x, y) {
-        for (let i = 0; i < 8; i++) {
-          const angle = (i / 8) * Math.PI * 2 + Math.random() * 0.5;
-          const speed = 2 + Math.random() * 2;
-          particles.push({
+        for (let i = 0; i < 12; i++) {
+          const angle = (i / 12) * Math.PI * 2 + Math.random() * 0.3;
+          const speed = 3 + Math.random() * 3;
+          debris.push({
             x: x,
             y: y,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            radius: 1.5 + Math.random() * 1.5,
-            color: '#ff6644',
+            radius: 1.5 + Math.random() * 2,
             alpha: 1,
-            isSatellite: false,
-            decay: 0.015,
-            frames: 60
+            frames: 80
           });
         }
-
-        ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, 20);
-        gradient.addColorStop(0, 'rgba(255, 255, 200, 1)');
-        gradient.addColorStop(0.5, 'rgba(255, 100, 50, 0.6)');
-        gradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
-        ctx.fillStyle = gradient;
-        ctx.fill();
       }
 
-      function updateSimulation() {
-        if (!isSimulating) return;
-
-        ctx.fillStyle = 'rgba(10, 10, 15, 0.2)';
+      function updateAnimation() {
+        ctx.fillStyle = 'rgba(5, 5, 10, 1)';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        drawGrid();
+
+        for (let i = 1; i <= 3; i++) {
+          drawOrbitRing(90 + i * 35);
+        }
         drawEarth();
 
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
 
-          p.x += p.vx;
-          p.y += p.vy;
+        satellites.forEach(sat => {
+          if (!sat.isExploded) {
+            sat.orbitAngle += sat.orbitSpeed;
+            sat.x = centerX + Math.cos(sat.orbitAngle) * sat.orbitRadius;
+            sat.y = centerY + Math.sin(sat.orbitAngle) * sat.orbitRadius;
 
-          if (p.x < p.radius || p.x > canvasWidth - p.radius) {
-            p.vx *= -0.8;
-            p.x = Math.max(p.radius, Math.min(canvasWidth - p.radius, p.x));
+            ctx.beginPath();
+            ctx.arc(sat.x, sat.y, sat.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(sat.x, sat.y, sat.radius + 2, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.stroke();
           }
-          if (p.y < p.radius || p.y > canvasHeight - p.radius) {
-            p.vy *= -0.8;
-            p.y = Math.max(p.radius, Math.min(canvasHeight - p.radius, p.y));
-          }
+        });
 
-          if (!p.isSatellite) {
-            p.frames--;
-            p.alpha = Math.max(0.1, p.frames / 60);
-            p.radius *= 0.995;
-            
-            if (p.frames <= 0 || p.radius < 0.5) {
-              particles.splice(i, 1);
-              continue;
-            }
-          }
+        frameCount++;
 
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.alpha;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        }
-
-        for (let i = 0; i < particles.length - 1; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const p1 = particles[i];
-            const p2 = particles[j];
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < p1.radius + p2.radius + 2) {
-              explode(p1.x, p1.y);
-              particles.splice(j, 1);
-              particles.splice(i, 1);
-              i--;
-              break;
-            }
+        if (currentPhase < satellites.length && frameCount > 15) {
+          const nextSat = satellites[currentPhase];
+          if (!nextSat.isExploded) {
+            createExplosion(nextSat.x, nextSat.y);
+            nextSat.isExploded = true;
+            currentPhase++;
+            frameCount = 0;
           }
         }
 
-        if (particles.length > 5 && Math.random() < 0.02) {
-          const idx = Math.floor(Math.random() * particles.length);
-          const p = particles[idx];
-          if (p.isSatellite) {
-            explode(p.x, p.y);
-            particles.splice(idx, 1);
+        for (let i = explosions.length - 1; i >= 0; i--) {
+          const exp = explosions[i];
+          exp.radius += (exp.maxRadius - exp.radius) * 0.2;
+          exp.alpha -= 0.05;
+          exp.frames--;
+
+          if (exp.frames > 0) {
+            const gradient = ctx.createRadialGradient(exp.x, exp.y, 0, exp.x, exp.y, exp.radius);
+            gradient.addColorStop(0, `rgba(255, 255, 200, ${exp.alpha})`);
+            gradient.addColorStop(0.3, `rgba(255, 150, 50, ${exp.alpha * 0.8})`);
+            gradient.addColorStop(0.6, `rgba(255, 80, 20, ${exp.alpha * 0.5})`);
+            gradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
+
+            ctx.beginPath();
+            ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+          } else {
+            explosions.splice(i, 1);
           }
         }
 
-        animationId = requestAnimationFrame(updateSimulation);
+        for (let i = debris.length - 1; i >= 0; i--) {
+          const d = debris[i];
+          d.x += d.vx;
+          d.y += d.vy;
+          d.vx *= 0.98;
+          d.vy *= 0.98;
+          d.frames--;
+          d.alpha = d.frames / 80;
+          d.radius *= 0.995;
+
+          if (d.frames > 0) {
+            const color = d.frames > 30 ? '#ff6644' : '#888888';
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.globalAlpha = d.alpha;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+          } else {
+            debris.splice(i, 1);
+          }
+        }
+
+        if (currentPhase < satellites.length || explosions.length > 0 || debris.length > 0) {
+          animationId = requestAnimationFrame(updateAnimation);
+        } else {
+          isAnimating = false;
+        }
       }
 
-      function startSimulation() {
-        if (isSimulating) return;
-        
-        ctx.fillStyle = '#0a0a0f';
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        
-        resetParticles();
-        isSimulating = true;
-        updateSimulation();
-      }
-
-      function stopSimulation() {
-        isSimulating = false;
+      function startAnimation() {
         if (animationId) {
           cancelAnimationFrame(animationId);
-          animationId = null;
         }
-      }
-
-      function resetSimulation() {
-        stopSimulation();
-        resetParticles();
-        drawFrame();
+        initSatellites();
+        isAnimating = true;
+        updateAnimation();
       }
 
       const resetBtn = document.getElementById('kesslerReset');
+      resetBtn.addEventListener('click', startAnimation);
 
-      resetBtn.addEventListener('click', function() {
-        resetSimulation();
-        setTimeout(function() {
-          isSimulating = true;
-          updateSimulation();
-        }, 500);
-      });
-
-      resetSimulation();
-      
-      setTimeout(function() {
-        isSimulating = true;
-        updateSimulation();
-      }, 1000);
+      startAnimation();
     }
   </script>
 </body></html>

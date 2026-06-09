@@ -1529,7 +1529,8 @@
     let particles = [];
     let isSimulating = false;
     let animationId = null;
-    const MAX_PARTICLES = 300;
+    let explosionQueue = [];
+    const MAX_PARTICLES = 500;
     const canvasWidth = 700;
     const canvasHeight = 525;
 
@@ -1541,9 +1542,10 @@
       const centerY = canvasHeight / 2;
       const earthRadius = 45;
 
-      const gradient = ctx.createRadialGradient(centerX - 10, centerY - 10, 0, centerX, centerY, earthRadius);
-      gradient.addColorStop(0, '#4a90d9');
-      gradient.addColorStop(0.5, '#2d5a8a');
+      const gradient = ctx.createRadialGradient(centerX - 15, centerY - 15, 0, centerX, centerY, earthRadius);
+      gradient.addColorStop(0, '#5a9fe9');
+      gradient.addColorStop(0.4, '#3d7bc9');
+      gradient.addColorStop(0.7, '#2d5a8a');
       gradient.addColorStop(1, '#1a3a5c');
 
       ctx.beginPath();
@@ -1553,16 +1555,21 @@
 
       ctx.beginPath();
       ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
       ctx.lineWidth = 2;
       ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(centerX + 15, centerY - 10, 12, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.fill();
     }
 
     function drawGrid() {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
       ctx.lineWidth = 1;
 
-      const gridSize = 30;
+      const gridSize = 25;
       for (let x = 0; x < canvasWidth; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -1582,80 +1589,132 @@
       const centerX = canvasWidth / 2;
       const centerY = canvasHeight / 2;
 
-      for (let i = 0; i < 25; i++) {
-        const angle = (i / 25) * Math.PI * 2;
-        const radius = 90 + (Math.random() - 0.5) * 50;
-        const speed = 0.3 + Math.random() * 0.2;
+      for (let i = 0; i < 35; i++) {
+        const angle = (i / 35) * Math.PI * 2;
+        const radius = 80 + (Math.random() - 0.5) * 70;
+        const speed = 0.25 + Math.random() * 0.15;
+        const size = 2 + Math.random() * 2;
         particles.push({
           x: centerX + Math.cos(angle) * radius,
           y: centerY + Math.sin(angle) * radius,
           vx: -Math.sin(angle) * speed,
           vy: Math.cos(angle) * speed,
-          radius: 2.5 + Math.random() * 1.5,
+          radius: size,
           color: '#ffffff',
           alpha: 1,
-          isSatellite: true
+          isSatellite: true,
+          trail: []
         });
       }
       drawFrame();
     }
 
     function drawFrame() {
-      ctx.fillStyle = '#050508';
+      ctx.fillStyle = '#0a0a0f';
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       drawGrid();
       drawEarth();
 
       particles.forEach(p => {
+        if (p.trail && p.trail.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(p.trail[0].x, p.trail[0].y);
+          p.trail.forEach(point => {
+            ctx.lineTo(point.x, point.y);
+          });
+          ctx.strokeStyle = `rgba(255, 255, 255, ${p.alpha * 0.3})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
         ctx.fill();
+        
+        if (p.isSatellite) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * 1.5, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
         ctx.globalAlpha = 1;
       });
     }
 
-    function explode(x, y) {
+    function explode(x, y, isInitial = false) {
       if (particles.length >= MAX_PARTICLES) return;
-      const count = Math.min(6, MAX_PARTICLES - particles.length);
+      const count = isInitial ? 15 : Math.min(10, MAX_PARTICLES - particles.length);
+      
       for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.3;
-        const speed = 1.2 + Math.random() * 1;
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+        const speed = isInitial ? (2 + Math.random() * 2) : (1.5 + Math.random() * 1.5);
         particles.push({
           x: x,
           y: y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          radius: 1 + Math.random() * 1.5,
-          color: '#ff8866',
+          radius: isInitial ? (1.5 + Math.random() * 2) : (1 + Math.random() * 1.5),
+          color: '#ff6b6b',
           alpha: 1,
           isSatellite: false,
-          decay: 0.008 + Math.random() * 0.004
+          decay: 0.005 + Math.random() * 0.005,
+          isHot: true,
+          heatFrames: 30
         });
       }
+
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      const explosionGradient = ctx.createRadialGradient(x, y, 0, x, y, 20);
+      explosionGradient.addColorStop(0, 'rgba(255, 200, 100, 0.8)');
+      explosionGradient.addColorStop(0.5, 'rgba(255, 100, 50, 0.4)');
+      explosionGradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
+      ctx.fillStyle = explosionGradient;
+      ctx.fill();
     }
 
     function updateSimulation() {
       if (!isSimulating) return;
 
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       drawGrid();
       drawEarth();
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         
+        if (p.isSatellite && p.trail) {
+          p.trail.push({ x: p.x, y: p.y });
+          if (p.trail.length > 20) p.trail.shift();
+        }
+
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < p.radius) { p.x = p.radius; p.vx *= -0.9; }
-        if (p.x > canvasWidth - p.radius) { p.x = canvasWidth - p.radius; p.vx *= -0.9; }
-        if (p.y < p.radius) { p.y = p.radius; p.vy *= -0.9; }
-        if (p.y > canvasHeight - p.radius) { p.y = canvasHeight - p.radius; p.vy *= -0.9; }
+        if (p.x < p.radius || p.x > canvasWidth - p.radius) {
+          p.vx *= -0.85;
+          p.x = Math.max(p.radius, Math.min(canvasWidth - p.radius, p.x));
+        }
+        if (p.y < p.radius || p.y > canvasHeight - p.radius) {
+          p.vy *= -0.85;
+          p.y = Math.max(p.radius, Math.min(canvasHeight - p.radius, p.y));
+        }
 
         if (!p.isSatellite) {
+          if (p.isHot && p.heatFrames > 0) {
+            p.heatFrames--;
+            p.color = p.heatFrames > 15 ? '#ff4444' : '#ff8866';
+          } else {
+            p.isHot = false;
+            p.color = '#aaaaaa';
+          }
+          
           p.alpha -= p.decay;
-          p.radius *= 0.995;
+          p.radius *= 0.997;
           if (p.alpha <= 0.1 || p.radius < 0.5) {
             particles.splice(i, 1);
             continue;
@@ -1664,9 +1723,15 @@
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        
+        if (p.isHot) {
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 10;
+        }
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
         ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = 1;
       }
 
@@ -1678,7 +1743,7 @@
           const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < p1.radius + p2.radius + 2) {
+          if (dist < p1.radius + p2.radius + 3) {
             explode(p1.x, p1.y);
             particles.splice(j, 1);
             particles.splice(i, 1);
@@ -1688,22 +1753,58 @@
         }
       }
 
-      if (particles.length > 0 && Math.random() < 0.008) {
-        const idx = Math.floor(Math.random() * particles.length);
-        const p = particles[idx];
-        if (p.isSatellite) {
-          explode(p.x, p.y);
-          particles.splice(idx, 1);
-        }
-      }
-
       animationId = requestAnimationFrame(updateSimulation);
+    }
+
+    function triggerInitialExplosion() {
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      const farthestSatellite = particles.reduce((farthest, p) => {
+        if (!p.isSatellite) return farthest;
+        const dist = Math.sqrt(Math.pow(p.x - centerX, 2) + Math.pow(p.y - centerY, 2));
+        return dist > farthest.dist ? { p, dist } : farthest;
+      }, { dist: 0 });
+
+      if (farthestSatellite.p) {
+        explode(farthestSatellite.p.x, farthestSatellite.p.y, true);
+        particles = particles.filter(p => p !== farthestSatellite.p);
+      }
     }
 
     document.getElementById('kesslerStart').addEventListener('click', () => {
       if (!isSimulating) {
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        particles = [];
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
+
+        for (let i = 0; i < 35; i++) {
+          const angle = (i / 35) * Math.PI * 2;
+          const radius = 80 + (Math.random() - 0.5) * 70;
+          const speed = 0.25 + Math.random() * 0.15;
+          particles.push({
+            x: centerX + Math.cos(angle) * radius,
+            y: centerY + Math.sin(angle) * radius,
+            vx: -Math.sin(angle) * speed,
+            vy: Math.cos(angle) * speed,
+            radius: 2 + Math.random() * 2,
+            color: '#ffffff',
+            alpha: 1,
+            isSatellite: true,
+            trail: []
+          });
+        }
+
         isSimulating = true;
         updateSimulation();
+
+        setTimeout(() => {
+          if (isSimulating) {
+            triggerInitialExplosion();
+          }
+        }, 1000);
       }
     });
 
